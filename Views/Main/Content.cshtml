@@ -1,0 +1,182 @@
+@model IEnumerable<UserTable>
+@{
+    Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    ViewData["Title"] = "Page Title";
+    var currentPage = ViewBag.CurrentPage;
+    var pageSize = ViewBag.PageSize;
+    var totalPages = ViewBag.TotalPages;
+    var totalItems = ViewBag.TotalItems;
+    var searchTerm = ViewBag.SearchTerm;
+}
+<!-- Search and pagination form -->
+<form method="get" action="/Main/Users">
+    <div class="row-11 d-flex my-2 mx-2">
+        <div class="col-2 text-Users-title fs-2">
+            Users
+        </div>
+        <div class="col-10 d-flex justify-content-end">
+            <div class="row mx-2">
+                <input type="text" name="searchTerm" placeholder="Search" class="search-textbox col p-4" value="@searchTerm" />
+            </div>
+            <div class="row mx-2">
+                <select class="form-select" name="pageSize">
+                    <option value="5" selected=@(pageSize == 5)>5</option>
+                    <option value="10" selected=@(pageSize == 10)>10</option>
+                    <option value="15" selected=@(pageSize == 15)>15</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mx-2">Apply</button>
+        </div>
+    </div>
+    <input type="hidden" name="page" value="@currentPage" />
+</form>
+
+<!-- User table -->
+<div class="table-responsive users-table row m-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" class="text-black-50">Name <img src="images/icons/customer.svg" alt=""></th>
+                <th scope="col" class="text-black-50">Email</th>
+                <th scope="col" class="text-black-50">Phone</th>
+                <th scope="col" class="text-black-50">Role</th>
+                <th scope="col" class="text-black-50">Status</th>
+                <th scope="col" class="text-black-50">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr data-user-id="@user.UserId">
+                    <td>
+                        <img src="@user.ProfileImage" alt="Profile" width="30px" class="mx-2">
+                        @user.Name
+                    </td>
+                    <td>@user.Email</td>
+                    <td>@user.Phone</td>
+                    <td>@user.Role</td>
+                    <td>
+                        <span class="status-active">@user.Status</span>
+                    </td>
+                    <td>
+                        <i class="material-icons" onclick="editUser(@user.UserId)">edit</i>
+                        <i class="material-icons delete-user" data-user-id="@user.UserId" data-bs-toggle="modal" data-bs-target="#confirmmodal">delete</i>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <!-- Pagination info and links -->
+    <div class="row mt-4 pagination-container justify-content-end">
+        <div class="col-md-8 d-flex align-items-center justify-content-between">
+            <div>
+                <span class="text-muted">
+                    Showing @((currentPage - 1) * pageSize + 1) - @Math.Min(currentPage * pageSize, totalItems) of @totalItems
+                </span>
+            </div>
+            <div>
+                @if (currentPage > 1)
+                {
+                    <a class="btn btn-outline-primary mx-1" href="/Main/Users?page=@(currentPage - 1)&pageSize=@pageSize&searchTerm=@searchTerm">
+                        <i class="fas fa-chevron-left"></i> Prev
+                    </a>
+                }
+                else { <span class="btn btn-outline-secondary mx-1 disabled"><i class="fas fa-chevron-left"></i> Prev</span> }
+
+                @if (currentPage < totalPages)
+                {
+                    <a class="btn btn-outline-primary mx-1" href="/Main/Users?page=@(currentPage + 1)&pageSize=@pageSize&searchTerm=@searchTerm">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                }
+                else { <span class="btn btn-outline-secondary mx-1 disabled">Next <i class="fas fa-chevron-right"></i></span> }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirmmodal" class="modal m-3" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class=" row modal-content w-100 border border-dark">
+      <div class="modal-header d-flex row">
+        <h5 class="modal-title col-10 m-3">Delete confirmation</h5>
+        <button type="button" class="btn-close col-2 m-9" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body row">
+        <p class="col-12 m-3">Are you sure want to delete this user.</p>
+      </div>
+      <div class=" row modal-footer m-3 d-flex align-items-center justify-content-center">
+        <button type="button" class="btn btn-primary col m-3" data-bs-dismiss="modal" id="confirmDelete">Yes</button>
+        <button type="button" class=" no-button col m-3" data-bs-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+    let searchTimeout;
+
+    // Handle form submission
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const searchTerm = document.querySelector('input[name="searchTerm"]').value;
+        const pageSize = document.querySelector('select[name="pageSize"]').value;
+        window.location.href = `/Main/Users?page=1&pageSize=${pageSize}&searchTerm=${encodeURIComponent(searchTerm)}`;
+    });
+
+    // Handle pagination clicks
+    document.querySelectorAll('.pagination-container a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = new URL(this.href);
+            window.location.href = url.toString();
+        });
+    });
+
+    // Initialize delete functionality
+    function initializeDeleteButtons() {
+        let userIdToDelete = null;
+
+        document.querySelectorAll('.delete-user').forEach(button => {
+            button.addEventListener('click', function() {
+                userIdToDelete = this.getAttribute('data-user-id');
+            });
+        });
+
+        document.getElementById('confirmDelete').addEventListener('click', function() {
+            if (userIdToDelete) {
+                fetch(`/Main/Delete/${userIdToDelete}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = document.querySelector(`tr[data-user-id="${userIdToDelete}"]`);
+                        if (row) {
+                            row.remove();
+                        }
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmmodal'));
+                        modal.hide();
+                        
+                        // Refresh the current page to update counts
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Error deleting user');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting user');
+                });
+            }
+        });
+    }
+
+    initializeDeleteButtons();
+</script>
+}

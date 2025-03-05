@@ -1,0 +1,84 @@
+@model Userdetail
+@{
+    Layout = "~/Views/Shared/_SecondLayout.cshtml";
+    ViewData["Title"] = "Add New User";
+}
+<div class="row-11 d-flex my-2">
+    <div class="col-6 text-Users-title fs-2">
+        Add New User
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+        <a asp-controller="Main" asp-action="Content" class="text-decoration-none back-button mx-1 p-2">
+            Back
+        </a>
+    </div>
+</div>
+<form asp-action="AddNewUser" method="post" enctype="multipart/form-data">
+    <div class="add-user-frame">
+        <div class="form-floating row m-2">
+            <input type="text" class="form-control col m-2 p-3" id="firstName" name="FirstName" placeholder="First Name" required>
+            <label for="firstName">First Name</label>
+            <input type="text" class="form-control col m-2 p-3" id="lastName" name="LastName" placeholder="Last Name" required>
+            <label for="lastName">Last Name</label>
+        </div>
+        <div class="form-floating row m-2">
+            <input type="text" class="form-control col m-2 p-3" id="userName" name="UserName" placeholder="User Name" required>
+            <label for="userName">User Name</label>
+            <select class="form-select col m-2 p-3" id="role" name="Role" required>
+                <option selected disabled>Select role</option>
+                <option value="Chef">Chef</option>
+                <option value="Account Manager">Account Manager</option>
+                <option value="Admin">Admin</option>
+            </select>
+            <label for="role">Role</label>
+        </div>
+        <div class="form-floating row m-2">
+            <input type="email" class="form-control col m-2 p-3" id="email" name="Email" placeholder="Email" required>
+            <label for="email">Email</label>
+            <input type="password" class="form-control col m-2 p-3" id="password" name="Password" placeholder="Password" required>
+            <label for="password">Password</label>
+        </div>
+        <div class="form-floating row m-2">
+            <input type="file" class="form-control col m-2 p-3" id="profileImage" name="ProfileImage" placeholder="Profile Image">
+            <label for="profileImage">Profile Image</label>
+        </div>
+        <div class="form-floating row m-2">
+            <select class="form-select col m-2 p-3" id="country" name="Country" required>
+                <option selected disabled>Select Country</option>
+                <option value="India">India</option>
+                <option value="Japan">Japan</option>
+            </select>
+            <label for="country">Country</label>
+            <select class="form-select col m-2 p-3" id="state" name="State" required>
+                <option selected disabled>Select State</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Rajasthan">Rajasthan</option>
+            </select>
+            <label for="state">State</label>
+            <select class="form-select col m-2 p-3" id="city" name="City" required>
+                <option selected disabled>Select City</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Surat">Surat</option>
+            </select>
+            <label for="city">City</label>
+        </div>
+        <div class="form-floating row m-2">
+            <input type="text" class="form-control col m-2 p-3" id="zipcode" name="Zipcode" placeholder="Zipcode" required>
+            <label for="zipcode">Zipcode</label>
+            <input type="text" class="form-control col m-2 p-3" id="address" name="Address" placeholder="Address" required>
+            <label for="address">Address</label>
+            <input type="text" class="form-control col m-2 p-3" id="phone" name="Phone" placeholder="Phone" required>
+            <label for="phone">Phone</label>
+        </div>
+        <div class="row m-2 my-3">
+            <div class="col my-2">
+                <button type="submit" class="create-user-button p-2">
+                    Create User
+                </button>
+                <a asp-controller="Main" asp-action="Content" class="cancel-user-button p-2">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</form>

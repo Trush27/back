@@ -44,103 +44,15 @@
         </div>
         <div class="form-floating row m-2">
             <select class="form-select col m-2 p-3" id="ddlCountry" name="Country" required>
-                <option selected disabled>Select Country</option>
+                <option value="" selected disabled>Select Country</option>
             </select>
             <label for="ddlCountry">Country</label>
             <select class="form-select col m-2 p-3" id="ddlState" name="State" required>
-                <option selected disabled>Select State</option>
+                <option value="" selected disabled>Select State</option>
             </select>
             <label for="ddlState">State</label>
-            <select class="form-select col m-2 p-3" id="ddlCity" name="City" required>if (!isNaN(CountryId)) {
-            var ddlState = $('#ddlState');
-            ddlState.empty();
-            ddlState.append($("<option></option>").val('').html('Please wait ...'));
-
-
-            $.ajax({
-                url: 'http://localhost:5094/CascadingDropdown/GetState',
-                type: 'GET',
-                dataType: 'json',
-                data: { CountryId: CountryId },
-                success: function (d) {
-
-                    ddlState.empty(); // Clear the please wait
-                    ddlState.append($("<option></option>").val('').html('Select State'));
-                    $.each(d, function (i, states) {
-                        ddlState.append($("<option></option>").val(states.stateId).html(states.stateName));
-                    });
-                },
-                error: function () {
-                    alert('Error!');
-                }
-            });
-        }
-
-
-    });
-
-    //District Bind By satate id
-    $("#ddlState").change(function () {
-        var StateId = parseInt($(this).val());
-        if (!isNaN(StateId)) {
-            var ddlDistrict = $('#ddlDistrict');
-            ddlDistrict.append($("<option></option>").val('').html('Please wait ...'));
-            $.ajax({
-                url: 'http://localhost:5094/CascadingDropdown/GetDistrict',
-                type: 'GET',
-                dataType: 'json',
-                data: { stateId: StateId },
-                success: function (d) {
-
-
-                    ddlDistrict.empty(); // Clear the plese wait
-                    ddlDistrict.append($("<option></option>").val('').html('Select District Name'));
-                    $.each(d, function (i, districts) {
-                        ddlDistrict.append($("<option></option>").val(districts.districtId).html(districts.districtName));
-                    });
-                },
-                error: function () {
-                    alert('Error!');
-                }
-            });
-        }
-
-
-    });
-
-    //On Submit Method
-    
-        $("#Submit").click(function(){
-               var ddlCountry =  parseInt($("#ddlCountry").val());
-               var ddlState =  parseInt( $("#ddlState").val());
-               var ddlDistrict =  parseInt($("#ddlDistrict").val());
-               
-               var data = {
-                ddlCountry: ddlCountry,
-                ddlState: ddlState,
-                ddlDistrict: ddlDistrict
-                
-            };
-             console.log(data);
-                  $.ajax({
-                    url: 'http://localhost:5094/CascadingDropdown/AddCountryStateDistrict',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: data,
-                    success: function (d) {
-                       alert("Submitted To Database");
-                    },
-                    error: function () {
-                        alert('Error!');
-                    }
-                });
-                
-        });
-
-    });
-</script>
-        }
-                <option selected disabled>Select City</option>
+            <select class="form-select col m-2 p-3" id="ddlCity" name="City" required>
+                <option value="" selected disabled>Select City</option>
             </select>
             <label for="ddlCity">City</label>
         </div>
@@ -170,6 +82,7 @@
     $(document).ready(function () {
         var ddlCountry = $('#ddlCountry');
         ddlCountry.append($("<option></option>").val('').html('Please Select Country'));
+        
         $.ajax({
             url: '@Url.Action("LoadCountry", "Main")',
             type: 'GET',

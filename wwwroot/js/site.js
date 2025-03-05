@@ -9,18 +9,6 @@
 
         this.classList.toggle("bi-eye");
     });
-
-    var floatingInputs = document.querySelectorAll('.form-floating .form-control');
-    floatingInputs.forEach(function (input) {
-        input.addEventListener('focus', function () {
-            this.parentElement.querySelector('label').classList.add('active');
-        });
-        input.addEventListener('blur', function () {
-            if (!this.value) {
-                this.parentElement.querySelector('label').classList.remove('active');
-            }
-        });
-    });
 });
 function addUser() {
     window.location.href = 'add-user.html';

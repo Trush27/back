@@ -176,36 +176,33 @@ public IActionResult Delete(int id)
     }
 }
 
-public IActionResult Index()
-{
-    return View();
-}
-
 [HttpGet]
 public async Task<ActionResult> LoadCountry()
 {
-    var countries = await _dbcontext.Countries.Where(c => !c.Isdeleted).ToListAsync();
+    var countries = await _dbcontext.Countries
+        .Where(c => !c.Isdeleted)
+        .Select(c => new { countryid = c.Countryid, name = c.Name })
+        .ToListAsync();
     return Ok(countries);
 }
 
 [HttpGet]
 public async Task<ActionResult> GetState(int countryId)
 {
-    var states = await _dbcontext.States.Where(s => s.Countryid == countryId && !s.Isdeleted).ToListAsync();
+    var states = await _dbcontext.States
+        .Where(s => s.Countryid == countryId && !s.Isdeleted)
+        .Select(s => new { stateid = s.Stateid, name = s.Name })
+        .ToListAsync();
     return Ok(states);
 }
 
 [HttpGet]
 public async Task<ActionResult> GetCity(int stateId)
 {
-    var cities = await _dbcontext.Cities.Where(c => c.Stateid == stateId && !c.Isdeleted).ToListAsync();
+    var cities = await _dbcontext.Cities
+        .Where(c => c.Stateid == stateId && !c.Isdeleted)
+        .Select(c => new { cityid = c.Cityid, name = c.Name })
+        .ToListAsync();
     return Ok(cities);
-}
-
-[HttpPost]
-public async Task<IActionResult> AddCountryStateDistrict(Userdetail model)
-{
-    // Add your logic to save the model
-    return RedirectToAction("Index");
 }
 }

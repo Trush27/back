@@ -175,4 +175,37 @@ public IActionResult Delete(int id)
         return StatusCode(500, new { success = false, message = "Error deleting user" });
     }
 }
+
+public IActionResult Index()
+{
+    return View();
+}
+
+[HttpGet]
+public async Task<ActionResult> LoadCountry()
+{
+    var countries = await _dbcontext.Countries.Where(c => !c.Isdeleted).ToListAsync();
+    return Ok(countries);
+}
+
+[HttpGet]
+public async Task<ActionResult> GetState(int countryId)
+{
+    var states = await _dbcontext.States.Where(s => s.Countryid == countryId && !s.Isdeleted).ToListAsync();
+    return Ok(states);
+}
+
+[HttpGet]
+public async Task<ActionResult> GetCity(int stateId)
+{
+    var cities = await _dbcontext.Cities.Where(c => c.Stateid == stateId && !c.Isdeleted).ToListAsync();
+    return Ok(cities);
+}
+
+[HttpPost]
+public async Task<IActionResult> AddCountryStateDistrict(Userdetail model)
+{
+    // Add your logic to save the model
+    return RedirectToAction("Index");
+}
 }
